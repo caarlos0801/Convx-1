@@ -199,6 +199,8 @@ object LocalAudioScanner {
                                     id = artistId,
                                     name = artistName,
                                     isLocal = true,
+                                    thumbnailUrl = albumArtUri,
+                            
                                 )
                             )
                             insert(
