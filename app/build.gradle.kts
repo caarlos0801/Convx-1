@@ -107,12 +107,6 @@ android {
             keyPassword = "android"
         }
         create("release") {
-            // Signing material comes from the environment only. Never hardcode a
-            // fallback password here: this file is published, the keystore is not,
-            // and a leaked release password plus a leaked keystore is an
-            // unrecoverable compromise of the app's signing identity.
-            // Set STORE_PASSWORD / KEY_ALIAS / KEY_PASSWORD before a release build.
-            // local.properties is gitignored, so it is a safe place to keep them.
             storeFile = file("keystore/release.keystore")
             storePassword = localProperties.getProperty("STORE_PASSWORD") ?: System.getenv("STORE_PASSWORD")
             keyAlias = localProperties.getProperty("KEY_ALIAS") ?: System.getenv("KEY_ALIAS")
@@ -132,8 +126,10 @@ android {
             isShrinkResources = true
             isCrunchPngs = false
             isDebuggable = false
-            if (file("keystore/release.keystore").exists()) {
+            if (file("keystore/release.keystore").exists() && !System.getenv("STORE_PASSWORD").isNullOrEmpty()) {
                 signingConfig = signingConfigs.getByName("release")
+            } else {
+                signingConfig = signingConfigs.getByName("debug")
             }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
